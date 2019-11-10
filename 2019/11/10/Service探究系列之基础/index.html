@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Android,Service," />
 
 
 
@@ -79,16 +79,18 @@
 
 
 
-<meta name="description" content="SummerXia&apos;s blog">
-<meta property="og:type" content="website">
-<meta property="og:title" content="SummerXia&#39;s blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="一、Service简介Service 是Android四大组件之一，是一种可以执行长时间操作而不提供界面的应用组件。Service 启动后，当用户切换到其他应用时，其依然可在后台继续运行。此外，组件也可以绑定到 Service  并与之进行交互，甚至是执行进程间通信（IPC）。主要是用来处理一些用户无感知的耗时后台操作，如：网络数据处理、播放音乐、定位信息、执行文件IO操作、数据库读写操作等。 二">
+<meta name="keywords" content="Android,Service">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Service探究系列之基础">
+<meta property="og:url" content="http://yoursite.com/2019/11/10/Service探究系列之基础/index.html">
 <meta property="og:site_name" content="SummerXia&#39;s blog">
-<meta property="og:description" content="SummerXia&apos;s blog">
+<meta property="og:description" content="一、Service简介Service 是Android四大组件之一，是一种可以执行长时间操作而不提供界面的应用组件。Service 启动后，当用户切换到其他应用时，其依然可在后台继续运行。此外，组件也可以绑定到 Service  并与之进行交互，甚至是执行进程间通信（IPC）。主要是用来处理一些用户无感知的耗时后台操作，如：网络数据处理、播放音乐、定位信息、执行文件IO操作、数据库读写操作等。 二">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-11-10T03:33:33.836Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SummerXia&#39;s blog">
-<meta name="twitter:description" content="SummerXia&apos;s blog">
+<meta name="twitter:title" content="Service探究系列之基础">
+<meta name="twitter:description" content="一、Service简介Service 是Android四大组件之一，是一种可以执行长时间操作而不提供界面的应用组件。Service 启动后，当用户切换到其他应用时，其依然可在后台继续运行。此外，组件也可以绑定到 Service  并与之进行交互，甚至是执行进程间通信（IPC）。主要是用来处理一些用户无感知的耗时后台操作，如：网络数据处理、播放音乐、定位信息、执行文件IO操作、数据库读写操作等。 二">
 
 
 
@@ -118,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2019/11/10/Service探究系列之基础/"/>
 
 
 
 
 
-  <title>SummerXia's blog</title>
+  <title>Service探究系列之基础 | SummerXia's blog</title>
   
 
 
@@ -143,8 +145,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -217,9 +218,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -249,9 +250,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/11/10/Service探究系列之基础/" itemprop="url">Service探究系列之基础</a></h1>
+          <h1 class="post-title" itemprop="name headline">Service探究系列之基础</h1>
         
 
         <div class="post-meta">
@@ -301,9 +300,7 @@
       
 
       
-        
-          
-            <h2 id="一、Service简介"><a href="#一、Service简介" class="headerlink" title="一、Service简介"></a>一、Service简介</h2><p><em>Service</em> 是Android四大组件之一，是一种可以执行长时间操作而不提供界面的应用组件。<em>Service</em> 启动后，当用户切换到其他应用时，其依然可在后台继续运行。此外，组件也可以绑定到 <em>Service</em>  并与之进行交互，甚至是执行进程间通信（IPC）。主要是用来处理一些用户无感知的耗时后台操作，如：网络数据处理、播放音乐、定位信息、执行文件IO操作、数据库读写操作等。</p>
+        <h2 id="一、Service简介"><a href="#一、Service简介" class="headerlink" title="一、Service简介"></a>一、Service简介</h2><p><em>Service</em> 是Android四大组件之一，是一种可以执行长时间操作而不提供界面的应用组件。<em>Service</em> 启动后，当用户切换到其他应用时，其依然可在后台继续运行。此外，组件也可以绑定到 <em>Service</em>  并与之进行交互，甚至是执行进程间通信（IPC）。主要是用来处理一些用户无感知的耗时后台操作，如：网络数据处理、播放音乐、定位信息、执行文件IO操作、数据库读写操作等。</p>
 <h2 id="二、创建Service"><a href="#二、创建Service" class="headerlink" title="二、创建Service"></a>二、创建Service</h2><p>创建一个 <em>Service</em> 非常简单，只需继承 <em>Service</em> 或其子类即可，以下是一个具体示例：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String TAG = <span class="string">"HelloService"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate();</span><br><span class="line">        Log.i(TAG, <span class="string">"HelloService onCreate"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">onStartCommand</span><span class="params">(Intent intent, <span class="keyword">int</span> flags, <span class="keyword">int</span> startId)</span> </span>&#123;</span><br><span class="line">        Log.i(TAG, <span class="string">"Hello service onStartCommand, intent:"</span> + (intent != <span class="keyword">null</span> ? intent.toString() : <span class="string">"null"</span>) + <span class="string">", flags:"</span> + flags + <span class="string">", startId:"</span> + startId);</span><br><span class="line">        <span class="keyword">int</span> count = intent.getIntExtra(<span class="string">"count"</span>, <span class="number">0</span>);</span><br><span class="line">        Log.i(TAG, <span class="string">"the count is "</span> + count);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.onStartCommand(intent, flags, startId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IBinder <span class="title">onBind</span><span class="params">(Intent intent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onDestroy();</span><br><span class="line">        Log.i(TAG, <span class="string">"Hello service onDestroy"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>上面的 <em>HelloService</em> 继承自 <em>Service</em>，并实现了其生命周期方法。其中 <strong><em>onCreate()</em></strong> 和 <strong><em>onDestroy()</em></strong> 同 <em>Activity</em> 的生命周期方法一样，在service创建或销毁时会被系统调用的；<strong><em>onStartCommand()</em></strong> 和 <strong><em>onBind()</em></strong> 方法也属于 <em>Service</em> 的生命周期方法，但是其根据启动方式不同而被回调的方法不同，本例中只关注 <strong><em>onStartCommand()</em></strong> 方法（后续我们在探索service的两种启动方式时再详细说明 <strong><em>onBind()</em></strong> 的使用），当service是以非绑定的方式启动时，在回调完onCreate()方法后，会立即回调onStartCommand()方法，并将附带参数以Intent的方式传递进来，service的重要工作也是在这个方法中实现的。</p>
@@ -344,8 +341,6 @@
 <h2 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a>四、总结</h2><p><strong>Service</strong> 作为Android四大组件之一，具有生命周期独立于启动组件而在后台不断运行的特性，主要用来处理一些用户无感知的耗时操作。通过创建服务、清单文件中声明服务、在其他组件中启动服务三个步骤来完成服务的使用，并可由外部组件手动停止服务，也可以在自身内部将服务停止。</p>
 <p>如果你的任务需要另开线程处理，且不需要多线程处理，应首选继承 <strong>IntentService</strong> 实现你的服务，其内置工作线程处理任务，并无需你关心其生命周期。</p>
 
-          
-        
       
     </div>
     
@@ -360,142 +355,36 @@
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/27/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="SummerXia">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="SummerXia's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/27/hello-world/" itemprop="url">Hello World</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-27T16:12:19+08:00">
-                2018-06-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
+        <div class="post-tags">
           
-
+            <a href="/tags/Android-Service/" rel="tag"># Android,Service</a>
           
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
       
 
       
       
-        <div class="post-eof"></div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/27/hello-world/" rel="next" title="Hello World">
+                <i class="fa fa-chevron-left"></i> Hello World
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
       
     </footer>
   </div>
@@ -505,10 +394,11 @@
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -516,6 +406,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -536,8 +430,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -588,6 +491,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、Service简介"><span class="nav-number">1.</span> <span class="nav-text">一、Service简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、创建Service"><span class="nav-number">2.</span> <span class="nav-text">二、创建Service</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、继承IntentService类"><span class="nav-number">3.</span> <span class="nav-text">三、继承IntentService类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、总结"><span class="nav-number">4.</span> <span class="nav-text">四、总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -728,6 +647,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
