@@ -232,6 +232,170 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/10/Service探究系列之启动方式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="SummerXia">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="SummerXia's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/11/10/Service探究系列之启动方式/" itemprop="url">Service探究系列之启动方式</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-11-10T15:03:52+08:00">
+                2019-11-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在上一篇中我们介绍了Android Service的基础概念和如何创建及启动Service。在这一篇中我们来详细探索一下Service的两种启动方式：startService和bindService。</p>
+<h2 id="一、startService"><a href="#一、startService" class="headerlink" title="一、startService"></a>一、startService</h2><p>当你的服务不需要与页面组件进行交互或只有提示性交互时，一般会使用<code>startService</code>启动服务，让其独立于组件而运行，如在后台定位用户位置信息。</p>
+<p>通过 <code>startService()</code> 方法启动服务，其生命周期如下图所示：</p>
+<p><img src="../image/start_lifecycle.jpg" alt="start_lifecycle"></p>
+<p>下面分别介绍其生命周期方法：</p>
+<p><strong><code>onCreate()</code></strong> ：服务第一次被创建时调用，主要用来处理一些服务所必须的初始化操作。注意，这里不要做任何耗时或繁重的操作。</p>
+<p><strong><code>onStartCommand()</code></strong> ：通过<code>startService</code>启动服务，在服务创建后会即可调用该方法，也是服务处理任务的主要方法，其一般实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">onStartCommand</span><span class="params">(Intent intent, <span class="keyword">int</span> flags, <span class="keyword">int</span> startId)</span> </span>&#123;</span><br><span class="line">       workThread.doSomething(intent);</span><br><span class="line">       <span class="keyword">return</span> START_NOT_STICKY;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到该方法需要返回一个 <code>int</code> 类型的值，该值用于描述服务被系统终止后，希望系统后续如何处理该服务。只能取以下三个常量中的一个：</p>
+<ol>
+<li>START_NO_STICKY：如果系统在 <code>onStartCommand()</code> 返回值后终止了服务，除非有待传递的挂起Intent，否则系统不会重现创建并启动服务。这是最安全的选项，可以避免服务及未完成任务状态的错乱，在合适的时机再次启动服务来处理待处理的任务。此模式适用于一些需要获取结果数据，但允许在内存紧张时停止服务且后续不需要再次恢复的任务，如从服务端请求数据。</li>
+<li>START_STICKY：如果系统在 <code>onStartCommand()</code> 返回值后终止了服务，则系统会重新创建并调用 <code>onStartCommand()</code> 方法，但不会重新传递最后一个Intent，因此该模式下 <code>onStartCommond()</code> 方法中的参数 intent 有可能为null，必须进行判空处理。此模式适用于不执行命令、但无限期运行的任务，如媒体播放器。</li>
+<li>START_REDELIVER_INTENT：如果系统在 <code>onStartCommand()</code> 返回值后终止了服务，则系统会重新创建服务，并将最后一个 Intent 传递给 <code>onStartCommand()</code> 。所有挂起的 Intent 均会依次传递。此模式适用于主动执行，且应立即恢复的任务，如文件下载或上传。</li>
+</ol>
+<p><code>onStartCommand()</code> 接收三个参数：第一个 intent 就是通过startService传递进来的Intent，可以携带一些数据；第二个 flags 为标识此次请求服务的额外数据，该标识由系统处理并传递，通常请求下为0，当服务被系统终止后再次启动服务时，系统会根据 <code>onStartCommand()</code> 方法的返回值传递该标识， 取值为 <strong>START_FLAG_REDELIVERY</strong> 或 <strong>START_FLAG_RETRY</strong>，一般我们不会用到这个参数；第三个 startId 是一个标识本次请求的唯一Integer值，主要用于停止服务标识（<code>stopSelfResult(int)</code>），如果调用stopSelfResult的 startId 和最后一个调用服务分配的startId不同，则不会停止服务。</p>
+<p>停止服务有两种方式：一是在组件中调用 <code>stopService()</code> 停止服务；二是在 <code>Service</code> 内部调用 <code>stopSelf()</code> 停止服务；</p>
+<p><strong><font color="#FF0000">注意：再次提醒下，Service 的所有生命周期方法默认都是运行在启动服务的进程中的主线程里的，如果有耗时或阻塞性操作，需要在 onStartCommand 方法中另起工作线程处理任务，也可以使用 IntentService 代替</font></strong></p>
+<p><strong><code>onDestroy</code></strong>：服务销毁时调用，一般在这里需要将service中的资源做释放处理。</p>
+<p>通过 <code>startService()</code> 启动的服务可以通过 <strong>Toast</strong> 或 <strong>状态栏通知</strong> 来通知用户任务处理的状态，也可以通过广播的方式将执行结果传递给接受者。</p>
+<h2 id="二、bindService"><a href="#二、bindService" class="headerlink" title="二、bindService"></a>二、bindService</h2><p>如果你需要在服务启动后，与服务进行交互或IPC，应该以<code>bindService()</code>来启动服务，并实现<code>Service</code>的<code>onBind()</code>方法，返回一个<code>IBinder</code>实例来进行与服务的交互或IPC。以下为一个简单的<code>onBind()</code>实现示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@Nullable</span></span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> IBinder <span class="title">onBind</span><span class="params">(Intent intent)</span> </span>&#123;</span><br><span class="line">       Log.i(TAG, <span class="string">"Hello service onBind, intent:"</span> + (intent != <span class="keyword">null</span> ? intent.toString() : <span class="string">"null"</span>));</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">new</span> HelloBinder();</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">       Toast.makeText(getApplicationContext(), <span class="string">"Hello "</span> + name + <span class="string">" from HelloService"</span>, Toast.LENGTH_SHORT).show();</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloBinder</span> <span class="keyword">extends</span> <span class="title">Binder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> HelloService <span class="title">getService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           <span class="keyword">return</span> HelloService.<span class="keyword">this</span>;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>如上所示<code>onBind()</code>方法需要返回一个<code>IBinder</code>类型的参数，<code>IBinder</code>是Android中进行IPC重要的类，很多地方都有其身影。这里我们只是简单地继承了<code>IBinder</code>的子类<code>Binder</code>，并提供了一个获取当前服务实例的方法。关于<code>IBinder</code>在不同服用中推荐的不同实现方式我们放到后面再详细展开说明，这里先关注以绑定启动服务的方法或步骤。</p>
+<p>实现了<code>onBind()</code>方法后，我们就可以在组件中以绑定的方式来启动服务了。以绑定的方式启动服务比直接启动服务要稍微复杂些，除了需要封装<code>Intent</code>来显式声明服务外，还必须提供<code>ServiceConnection</code>实例，后者会监控与服务的连接，并能从中获取<code>onBind()</code>返回的<code>IBinder</code>实例，以便组件与服务进行交互或IPC。以下为<code>bindService()</code>启动服务的示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 创建ServiceConnection实例</span></span><br><span class="line"><span class="keyword">private</span> ServiceConnection helloServiceConnection = <span class="keyword">new</span> ServiceConnection() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceConnected</span><span class="params">(ComponentName name, IBinder service)</span> </span>&#123;</span><br><span class="line">            Log.i(TAG, <span class="string">"onServiceConnected"</span>);</span><br><span class="line">            mBound = <span class="keyword">true</span>;</span><br><span class="line">            HelloService.HelloBinder binder = (HelloService.HelloBinder) service;</span><br><span class="line">            </span><br><span class="line">            helloService = binder.getService();</span><br><span class="line">            helloService.sayHello(<span class="string">"MainActivity"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceDisconnected</span><span class="params">(ComponentName name)</span> </span>&#123;</span><br><span class="line">            Log.i(TAG, <span class="string">"onServiceDisconnected"</span>);</span><br><span class="line">            mBound = <span class="keyword">false</span>;</span><br><span class="line">            helloService = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 在Activity中启动服务</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">bindService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Intent intent = <span class="keyword">new</span> Intent(MainActivity.<span class="keyword">this</span>, HelloService.class);</span><br><span class="line">        intent.putExtra(<span class="string">"count"</span>, count);</span><br><span class="line">        bindService(intent, helloServiceConnection, Context.BIND_AUTO_CREATE);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span></span>&#123;</span><br><span class="line">    	<span class="keyword">if</span>(mBound &amp;&amp; helloService != <span class="keyword">null</span>)&#123;</span><br><span class="line">    		helloService.sayHello(<span class="string">"CLICK"</span>);</span><br><span class="line">    	&#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>以上即为绑定启动服务的示例，下面我们来一一分析下<code>ServiceConnection</code>的实现和<code>bindService()</code>的参数及绑定启动后<code>Service</code>的生命周期。</p>
+<p><code>ServiceConnection</code>是一个接口，当创建客户端和服务的连接时，Android系统会调用其 <code>onServiceConnected(ComponentName name, IBinder service)</code>方法，并将服务在<code>onBind()</code>方法返回的<code>IBinder</code>作为其方法的第二个参数传递进来，客户端可以使用该参数与绑定的服务进行通信交互。当客户端和服务断开连接时，Android系统会调用其<code>onServiceDisconnected(ComponentName name)</code>方法，通知客户端与服务的连接断开了。</p>
+<p><code>bindService()</code>的第三个参数为绑定服务的选项标识，可能的取值为以下几种：</p>
+<ol>
+<li><code>Context. BIND_AUTO_CREATE</code>：在绑定服务时自动创建服务，是绑定服务时常用的标识，其他的几个不常用；</li>
+<li><code>Context. BIND_NOT_FOREGROUND</code>：不允许服务的进程提升到前台；</li>
+<li><code>Context. BIND_ABOVE_CLIENT</code>：服务的优先级高于客户端，当OOM时会优先销毁application，然后才销毁服务；</li>
+<li><code>Context. BIND_ALLOW_OOM_MANAGEMENT</code>：允许进程持有的服务超出自身的内存管理边界，使服务得以运行；</li>
+<li><code>Context. BIND_WAIVE_PRIORITY</code>：不会超出目标服务进程的计划或内存管理优先级，允许服务像在后台运行的普通应用进程那样被后台LRU列表管理；</li>
+</ol>
+<p>以单纯的<code>bindService()</code>启动服务，组件可以通过<code>unbindService()</code>来解除与服务的绑定关系，同一个服务允许多个客户端同时绑定服务，当所有与服务绑定的组件都解绑后，服务也会随之销毁。其生命周期如下所示：</p>
+<p><img src="../image/bind_lifecycle.jpg" alt="start_lifecycle"></p>
+<p>同一个服务也允许以<code>startService()</code>和<code>bindService()</code>两种方式同时启动，这种情况下服务的声明周期跟两种启动方式都相关，只有所有与服务绑定的组件都解绑了且调用了停止服务，此时服务才会销毁。可以用下图来表示<code>Service</code>可能的生命周期：</p>
+<p><img src="../image/service_lifecycle.jpg" alt="start_lifecycle"></p>
+<p><strong>总结下绑定启动服务的步骤：</strong></p>
+<ol>
+<li>创建<code>ServiceConnection</code>实例，用来监控服务的连接情况。</li>
+<li>创建声明服务的显示<code>Intent</code>，调用<code>bindService()</code>方法来绑定启动服务。</li>
+<li>在<code>ServiceConnection</code>实例的<code>onServiceConnected()</code>回调方法中接收<code>onBind()</code>返回的<code>IBinder</code>实例，并调用该实例的公共方法获取<code>Service</code>实例或<code>Service</code>其他可供客户端调用的对象实例。</li>
+<li>客户端就可以通过获取到的服务相关实例来与<code>Service</code>进行交互了。</li>
+</ol>
+<h3 id="三、IBinder的几种实现方式"><a href="#三、IBinder的几种实现方式" class="headerlink" title="三、IBinder的几种实现方式"></a>三、IBinder的几种实现方式</h3><h4 id="继承Binder"><a href="#继承Binder" class="headerlink" title="继承Binder"></a>继承Binder</h4><h4 id="使用Messenger"><a href="#使用Messenger" class="headerlink" title="使用Messenger"></a>使用Messenger</h4><h4 id="AIDL"><a href="#AIDL" class="headerlink" title="AIDL"></a>AIDL</h4>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/10/Service探究系列之基础/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -552,7 +716,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
